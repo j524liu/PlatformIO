@@ -8,12 +8,12 @@ unsigned int flag = 0;
 
 void OnDisconnect() {
   detachInterrupt(0);
-  // delay(2);
-  // Serial.printf("DIGITAL: %d.", digitalRead(27));
   if(!flag)
   {
     flag = 1;
   }
+  // delay(2);
+  // Serial.printf("DIGITAL: %d.", digitalRead(27));
 } 
 
 void setup() {
@@ -24,11 +24,16 @@ void setup() {
   upSerial.begin(115200, SERIAL_8N1, 4, 5);       //RX--4; TX--5
   downSerial.begin(115200, SERIAL_8N1, 10, 1);    //RX--10; TX--1
 
-  upSerial.print("{START}{int b = 2}");
-
   pinMode(0, INPUT);
   pinMode(6, OUTPUT);
   digitalWrite(6, HIGH);
+  
+  delay(2000);
+  // upSerial.printf("P1: %d", digitalRead(0));
+  if(!digitalRead(0))
+  {
+    upSerial.print("{START}{int a = 2}");
+  }
 
   attachInterrupt(0, OnDisconnect, FALLING);
 }
@@ -39,15 +44,16 @@ void loop() {
   {
     if(1 == flag)
     {
-      upSerial.print("{START}{int b = 2}");
+      upSerial.print("{START}{int a = 2}");
       flag = 0;
       attachInterrupt(0, OnDisconnect, FALLING);
     }
     // Serial.print("HHHHHHHHHHHHH");
     delay(10);
   }
+
   String buff = downSerial.readString();
-  String send = buff + "1{int b = 2}";
+  String send = buff + "{int a = 2}";
   upSerial.print(send);
   downSerial.flush();
 }
